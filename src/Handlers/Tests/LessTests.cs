@@ -85,7 +85,7 @@ h1 {
         {
             string filename = writeFile(Path.GetRandomFileName() + ".less", lessSource);
             var output = new StringWriter();
-            bool success = LessCssHandler.renderStylesheet(filename, output);
+            bool success = LessCssHandler.RenderStylesheet(filename, output);
             if (!success)
                 throw new ApplicationException("lessc error: " + output);
             string outputCss = output.ToString().Trim();

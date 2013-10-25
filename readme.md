@@ -34,3 +34,10 @@ If you're using Visual Studio 2008 you'll need follow these manual steps:
 ```
 
 * If you're using IIS 6 then you will need to map the file extensions *.less and *.coffee to aspnet_isapi.dll
+
+## How to build
+
+- Copy nodejs to "src\Handlers\nodejs"
+- Run tar-node.cmd until nodejs.tqz shows up in "src\Handlers\Resources"
+
+

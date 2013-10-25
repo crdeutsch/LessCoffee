@@ -42,15 +42,21 @@ namespace DotSmart
                 if (_tempDirectory != null)
                     return _tempDirectory;
 
-
-                _tempDirectory = Path.Combine(Path.GetTempPath(), "LessCoffee" + (HttpRuntime.AppDomainAppId ?? "").Replace('/', '-'));
-                if (!Directory.Exists(_tempDirectory))
+                if (!string.IsNullOrWhiteSpace(WebConfigurationManager.AppSettings["LessCoffeeTempDirectory"]))
                 {
-                    try
+                    _tempDirectory = WebConfigurationManager.AppSettings["LessCoffeeTempDirectory"];
+                }
+                else 
+                {
+                    _tempDirectory = Path.Combine(HttpContext.Current.Server.MapPath("~/App_Data/") , "LessCoffee" + (HttpRuntime.AppDomainAppId ?? "").Replace('/', '-'));
+                    if (!Directory.Exists(_tempDirectory))
                     {
-                        Directory.CreateDirectory(_tempDirectory);
+                        try
+                        {
+                            Directory.CreateDirectory(_tempDirectory);
+                        }
+                        catch (IOException) {/*another thread got there*/}
                     }
-                    catch (IOException) {/*another thread got there*/}
                 }
 
                 return _tempDirectory;

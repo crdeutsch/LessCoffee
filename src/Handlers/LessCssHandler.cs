@@ -30,7 +30,7 @@ namespace DotSmart
 
         protected override void Render(string physicalFileName, TextWriter output)
         {
-            renderStylesheet(physicalFileName, output);
+            RenderStylesheet(physicalFileName, output);
         }
 
         protected override IEnumerable<string> GetFileDependencies(string physicalFileName)
@@ -54,7 +54,7 @@ namespace DotSmart
             );
         }
 
-        internal static bool renderStylesheet(string lessFilePath, TextWriter output)
+        public static bool RenderStylesheet(string lessFilePath, TextWriter output)
         {
             try
             {
