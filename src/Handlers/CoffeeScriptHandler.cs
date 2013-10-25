@@ -68,13 +68,12 @@ namespace DotSmart
               -v, --version      display the version number
               -w, --watch        watch scripts for changes and rerun commands
             */
-            using (var scriptFile = new StreamReader(scriptFileName))
             using (var stdErr = new StringWriter())
             {
                 Debug.WriteLine("Compiling " + scriptFileName);
                 int exitCode = ProcessUtil.Exec(NodeExe, 
-                    "\"" + _coffee + "\" --compile --stdio", 
-                    scriptFile, output, stdErr);
+                    "\"" + _coffee + "\" --compile " + scriptFileName,
+                    output, stdErr);
                 if (exitCode != 0)
                 {
                     output.WriteLine("throw \"Error in " + Path.GetFileName(scriptFileName).JsEncode() + ": " 

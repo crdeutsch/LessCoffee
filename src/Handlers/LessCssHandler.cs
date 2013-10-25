@@ -54,46 +54,15 @@ namespace DotSmart
             );
         }
 
-        public static bool RenderStylesheet(string lessFilePath, TextWriter output)
+        public static void RenderStylesheet(string lessFilePath, TextWriter output)
         {
-            try
-            {
-                string postscript = null;
-                if (GetPostscript != null)
-                    postscript = GetPostscript.GetInvocationList().Cast<Func<string, string>>().Select(func => func(lessFilePath)).Join(Environment.NewLine);
-
-                RenderCss(lessFilePath, output, 
-                    compress: !DebugMode, 
-                    lessPostscript: postscript, 
-                    lineNumbers: DebugMode ? "comments" : null);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                output.WriteLine("/* ERROR: " + ex.Message + " */");
-                return false;
-            }
+            RenderCss(lessFilePath, output, 
+                compress: !DebugMode, 
+                lineNumbers: DebugMode ? "comments" : null);
         }
 
-        /// <summary>
-        /// Here you can dynamically append extra bits of LESS script at 
-        /// runtime e.g. variable overrides. For example you could grab 
-        /// user's favourite colour from database.
-        /// </summary>
-        public static event Func<string, string> GetPostscript;
-
-        public static void RenderCss(string lessFilePath, TextWriter output, bool compress = true, string lessPrologue = null, string lessPostscript = null, string lineNumbers = null)
+        public static void RenderCss(string lessFilePath, TextWriter output, bool compress = true, string lineNumbers = null)
         {
-            TextReader lessStream;
-
-            string lessSrc = File.ReadAllText(lessFilePath);
-            lessStream = new StringReader(
-                lessPrologue
-                + lessSrc
-                + lessPostscript
-                );
-
-            using (lessStream)
             using (var errors = new StringWriter())
             {
                 /*
@@ -136,13 +105,12 @@ namespace DotSmart
                  */
 
                 string args = "\"" + _lessc + "\""
-                    + " -" // read from stdin
+                    + " " + lessFilePath // read from stdin
                     + (compress ? " --yui-compress" : "")
                     + " --no-color"
                     + (lineNumbers != null ? " --line-numbers=" + lineNumbers : "");
                 int exitCode = ProcessUtil.Exec(NodeExe,
                     args: args,
-                    stdIn: lessStream,
                     stdOut: output,
                     stdErr: errors, 
                     workingDirectory: Path.GetDirectoryName(lessFilePath));

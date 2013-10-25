@@ -14,26 +14,36 @@ namespace DotSmart
     {
         public void Process(BundleContext context, BundleResponse response)
         {
-            using (var stream = new MemoryStream())
+            try
             {
-                using (var writer = new StringWriter())
+                using (var stream = new MemoryStream())
                 {
-                    using (var sw = new StreamWriter(stream))
+                    using (var writer = new StringWriter())
                     {
-                        foreach (var file in response.Files)
+                        using (var sw = new StreamWriter(stream))
                         {
-                            LessCssHandler.RenderCss(context.HttpContext.Server.MapPath(file.IncludedVirtualPath), sw, false, null, null, null);
-                        }
+                            foreach (var file in response.Files)
+                            {
+                                LessCssHandler.RenderCss(context.HttpContext.Server.MapPath(file.IncludedVirtualPath), sw,
+                                    compress: !ScriptHandlerBase.DebugMode,
+                                    lineNumbers: ScriptHandlerBase.DebugMode ? "comments" : null);
+                            }
 
-                        sw.Flush();
-                        stream.Position = 0;
-                        using (var streamReader = new StreamReader(stream))
-                        {
+                            sw.Flush();
+                            stream.Position = 0;
+                            using (var streamReader = new StreamReader(stream))
+                            {
                             response.Content = streamReader.ReadToEnd();
-                            response.ContentType = "text/css";
+                                response.ContentType = "text/css";
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception exp)
+            {
+                response.Content = exp.Message;
+                response.ContentType = "text/css";
             }
         }
 

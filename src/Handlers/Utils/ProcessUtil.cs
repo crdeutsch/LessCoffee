@@ -7,12 +7,12 @@ namespace DotSmart
 {
     class ProcessUtil
     {
-        public static int Exec(string filename, string args, TextReader stdIn, TextWriter stdOut, TextWriter stdErr, Encoding encoding = null, string workingDirectory = null)
+        public static int Exec(string filename, string args, TextWriter stdOut, TextWriter stdErr, Encoding encoding = null, string workingDirectory = null)
         {
             using (Process process = new Process())
             {
                 ProcessStartInfo psi = process.StartInfo;
-                psi.RedirectStandardError = psi.RedirectStandardInput = psi.RedirectStandardOutput = true;
+                psi.RedirectStandardError = psi.RedirectStandardOutput = true;
                 psi.UseShellExecute = false;
                 psi.CreateNoWindow = true;
                 psi.FileName = filename;
@@ -43,21 +43,6 @@ namespace DotSmart
                 process.Start();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-
-                if (stdIn != null)
-                {
-                    if (encoding != null)
-                    {
-                        // There's no Process.Standard*Input*Encoding, so write specified encoding's raw bytes to base input stream
-                        using (var encodedStdIn = new StreamWriter(process.StandardInput.BaseStream, encoding))
-                            encodedStdIn.Write(stdIn.ReadToEnd());
-                    }
-                    else
-                    {
-                        using (process.StandardInput)
-                            process.StandardInput.Write(stdIn.ReadToEnd());
-                    }
-                }
 
                 process.WaitForExit();
                 return process.ExitCode;

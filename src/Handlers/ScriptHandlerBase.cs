@@ -130,7 +130,7 @@ namespace DotSmart
         }
 
         static bool? _debugMode;
-        static protected bool DebugMode
+        static public bool DebugMode
         {
             get
             {
