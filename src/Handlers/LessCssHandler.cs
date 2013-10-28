@@ -105,7 +105,7 @@ namespace DotSmart
                  */
 
                 string args = "\"" + _lessc + "\""
-                    + " " + lessFilePath // read from stdin
+                    + " " + "\"" + lessFilePath + "\"" // read from stdin
                     + (compress ? " --yui-compress" : "")
                     + " --no-color"
                     + (lineNumbers != null ? " --line-numbers=" + lineNumbers : "");
